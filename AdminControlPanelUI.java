@@ -30,16 +30,19 @@ public class AdminControlPanelUI implements ActionListener,Visitor{
         NumUsers = 0;
         NumGroups = 1;
 
+        //Printing output on the UI.
         mainFrame = new JFrame( "Admin Control Panel" );
         consoleOutput = new JTextArea( "Welcome to Mini-Twitter Everyone!\n" );
-        consoleOutput.setBounds( 405, 100, 370, 290 );
+        consoleOutput.setBounds( 400, 100, 350, 300 );
         
         mainFrame.add( consoleOutput );
-        
+        //UserID button
         userIdInput = new JTextField( "Enter UserId" );
+        //GroupID button
         groupIdInput = new JTextField( "Enter GroupId" );
-        
-        userIdInput.setBounds( 400, 10, 260, 20 );
+        //Setting bounds for the buttons
+        userIdInput.setBounds( 400, 10, 250, 20 );
+        //Allows user to edit the UI windows
         userIdInput.setEditable(true);
         
         groupIdInput.setBounds( 400, 40, 260, 20 );
@@ -49,7 +52,7 @@ public class AdminControlPanelUI implements ActionListener,Visitor{
         mainFrame.add( groupIdInput );
        
 
-        //Buttons required for the UI
+        //Buttons required for the UI printing.
         userIdButton = new JButton( "Add User" );
         groupIdButton = new JButton( "Add Group" );
         openUserButton = new JButton( "Open User View" );
@@ -77,7 +80,7 @@ public class AdminControlPanelUI implements ActionListener,Visitor{
         totalgroupButton.addActionListener( this );
         totalMessageButton.addActionListener( this );
         positiveMessageButton.addActionListener( this );
-       
+       //Adding to the main UI
         mainFrame.add( userIdButton );
         mainFrame.add( groupIdButton );
         mainFrame.add( openUserButton );

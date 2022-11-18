@@ -1,6 +1,7 @@
 import java.util.*;
 import javax.swing.*;
 
+//
 public class User extends UserComposite{
     private ArrayList<String> tweets;
     private ArrayList<Visitable> followers;

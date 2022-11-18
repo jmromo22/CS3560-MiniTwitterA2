@@ -53,7 +53,7 @@ public class UserWindow implements ActionListener{
         userFrame.setLayout( null );
         userFrame.setVisible( true );
     }
-
+    
     public void actionPerformed( ActionEvent e ){
         if( e.getSource() == followButton ){
             String followId = followInput.getText();
