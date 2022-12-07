@@ -16,11 +16,12 @@ public class AdminControlPanelUI implements ActionListener,Visitor{
     private HashMap<String,Visitable> users;
     private UserComposite selectedUser;
     private int totalMessages, NumUsers, NumGroups, positiveTotal;
-
+    private long lastUpdateTime;
+    private String lastUpdateId;
     private JFrame mainFrame;
     private JTextArea consoleOutput;
     private JTextField userIdInput, groupIdInput;
-    private JButton userIdButton, groupIdButton, openUserButton, totalUserButton, totalgroupButton, totalMessageButton, positiveMessageButton;
+    private JButton userIdButton, groupIdButton, openUserButton, totalUserButton, totalgroupButton, totalMessageButton, positiveMessageButton,idVerificationButton, lastUpdateButton;
     private JTree userList;
     private DefaultTreeModel userListModel;
 
@@ -60,18 +61,19 @@ public class AdminControlPanelUI implements ActionListener,Visitor{
         totalgroupButton = new JButton( "Show Total Group" );
         totalMessageButton = new JButton( "Show Total Messages" );
         positiveMessageButton = new JButton( "Show Positive Percentage" );
+        idVerificationButton = new JButton( "Validate All Id's" );
+        lastUpdateButton = new JButton( "Get Last User Update" );
        
         //Dimensions of the buttons.
         userIdButton.setBounds( 670, 10, 100, 20 );
         groupIdButton.setBounds( 670, 40, 100, 20 );
-       
         openUserButton.setBounds( 400, 70, 370, 20 );
-        
-        totalUserButton.setBounds( 400, 400, 180, 20 );
-        totalgroupButton.setBounds( 595, 400, 180, 20 );
-        totalMessageButton.setBounds( 400, 430, 180, 20 );
-        
-        positiveMessageButton.setBounds( 595, 430, 180, 20 );
+        totalUserButton.setBounds( 405, 370, 180, 20 );
+        totalgroupButton.setBounds( 595, 370, 180, 20 );
+        totalMessageButton.setBounds( 405, 400, 180, 20 );
+        positiveMessageButton.setBounds( 595, 400, 180, 20 );
+        idVerificationButton.setBounds( 405, 430, 180, 20 );
+        lastUpdateButton.setBounds( 595, 430, 180, 20 );
         
         userIdButton.addActionListener( this );
         groupIdButton.addActionListener( this );
@@ -80,6 +82,9 @@ public class AdminControlPanelUI implements ActionListener,Visitor{
         totalgroupButton.addActionListener( this );
         totalMessageButton.addActionListener( this );
         positiveMessageButton.addActionListener( this );
+        //added features 
+        idVerificationButton.addActionListener( this );
+        lastUpdateButton.addActionListener( this );
        //Adding to the main UI
         mainFrame.add( userIdButton );
         mainFrame.add( groupIdButton );
@@ -88,6 +93,9 @@ public class AdminControlPanelUI implements ActionListener,Visitor{
         mainFrame.add( totalgroupButton );
         mainFrame.add( totalMessageButton );
         mainFrame.add( positiveMessageButton );
+        //added buttons
+        mainFrame.add( idVerificationButton );
+        mainFrame.add( lastUpdateButton );
        
         //Root is where the tree of groups and users begins from
         root = new Group( "root" );
@@ -149,6 +157,17 @@ public class AdminControlPanelUI implements ActionListener,Visitor{
         consoleOutput.update( consoleOutput.getGraphics() );
     }
 
+    //Added A2
+    public void GetLastUserUpdate(){
+        lastUpdateId = "";
+        lastUpdateTime = Long.MAX_VALUE;
+        for( Visitable user: users.values() ){
+            user.AcceptLastUpdate( this );
+        }
+        consoleOutput.append( "Last Update User: " + lastUpdateId );
+        consoleOutput.update( consoleOutput.getGraphics() );
+    }
+
     public void VisitMessages( User user ){
         totalMessages += user.GetMyTweets().size();
     }
@@ -164,6 +183,23 @@ public class AdminControlPanelUI implements ActionListener,Visitor{
                 }
             }
         }
+    }
+
+    //Added A2
+    public void VisitLastUpdate( User user ){
+        if( user.GetLastUpdate() < lastUpdateTime ){
+            lastUpdateId = user.GetId();
+        }
+    }
+
+    public boolean validateUsers(){
+        Set<String> names = users.keySet();
+        for( String name: names ){
+            if( name.indexOf( " " ) != -1 ){
+                return false;
+            }
+        }
+        return true;
     }
 
     public void actionPerformed( ActionEvent e ){
@@ -198,7 +234,9 @@ public class AdminControlPanelUI implements ActionListener,Visitor{
         }
         else if( e.getSource() == openUserButton ){
             try{
-                UserWindow newUserview = new UserWindow( (User)userList.getLastSelectedPathComponent(), this );
+                User user = (User)userList.getLastSelectedPathComponent();
+                System.out.println( user.GetId() + " created at " + user.GetCreationTime() + "\n" );
+                UserWindow newUserview = new UserWindow( user, this );
             } catch ( Exception ex ){}
         }
         else if( e.getSource() == totalUserButton ){
@@ -212,6 +250,19 @@ public class AdminControlPanelUI implements ActionListener,Visitor{
         }
         else if( e.getSource() == positiveMessageButton ){
             GetPositiveTotal();
+        }
+        else if( e.getSource() == idVerificationButton ){
+            if( validateUsers() ){
+                consoleOutput.append( "All users are valid!\n" );
+                consoleOutput.update( consoleOutput.getGraphics() );
+            }
+            else{
+                consoleOutput.append( "One or more users are not valid!\n" );
+                consoleOutput.update( consoleOutput.getGraphics() );
+            }
+        }
+        else if( e.getSource() == lastUpdateButton ){
+            GetLastUserUpdate();
         }
 
     }

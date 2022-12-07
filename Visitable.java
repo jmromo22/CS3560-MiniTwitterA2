@@ -10,5 +10,7 @@ public interface Visitable{
 
     public void UpdateTweets( String tweet );
 
+    public void AcceptLastUpdate( Visitor visitor );
+
     
 }
